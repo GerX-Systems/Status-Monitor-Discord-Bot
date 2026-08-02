@@ -29,6 +29,7 @@
 <br>
 <div align="center">
 <h1>Willkommen!</h1>
+<p><strong>HINWEIS:</strong> Es ist eine Status Webseite auf <a href="https://statuspage.io/">statuspage.io</a> Notwendig!</p>
 </div>
 <br><br>
 <div align="center">
