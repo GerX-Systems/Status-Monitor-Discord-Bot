@@ -56,6 +56,7 @@
 <div align="center">
 <h2>🗄️ Daten</h2>
 </div>
+<br><br>
 
 | Zeile | Variable | Name | Beschreibung |
 | ----- | -------- | ---- | ------------ |
@@ -70,3 +71,4 @@
 | 30 | partial_outage_emoji | Teilausfall Emoji | Emoji, der Angezeigt wird, wenn das System Teilausfälle aufweist. |
 | 31 | major_outage_emoji | Großer Ausfall Emoji | Emoji, der Angezeigt wird, wenn das System einen Ausfall aufweist. |
 | 32 | under_maintenance_emoji | Wartungsarbeiten Emoji | Emoji, der Angezeigt wird, wenn das System Gewartet wird. |
+<br><br>
