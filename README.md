@@ -38,6 +38,7 @@
 
 - [🚀 Start](#-start)
 - [🗄️ Daten](#-daten)
+- [👥 Mitwirkende](#-mitwirkende)
 <br><br><br><br>
 <hr>
 <br>
@@ -71,4 +72,13 @@
 | 30 | partial_outage_emoji | Teilausfall Emoji | Emoji, der Angezeigt wird, wenn das System Teilausfälle aufweist. |
 | 31 | major_outage_emoji | Großer Ausfall Emoji | Emoji, der Angezeigt wird, wenn das System einen Ausfall aufweist. |
 | 32 | under_maintenance_emoji | Wartungsarbeiten Emoji | Emoji, der Angezeigt wird, wenn das System Gewartet wird. |
+
 <br><br>
+<br><br><br><br>
+
+<div align="center">
+<h2>👥 Mitwirkende</h2>
+</div>
+<br><br>
+
+[![NilsLP25](https://badgen.net/badge/%20/NilsLP25/blue?icon=https://res.cloudinary.com/btzjbj3t/image/upload/v1784539053/Design_ohne_Titel_20260720_111700_0000_kg1djg.svg)](https://github.com/NilsLP25)
