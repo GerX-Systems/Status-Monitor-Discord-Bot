@@ -37,24 +37,38 @@
 <br><br>
 
 - [🚀 Start](#-start)
--
+- [🗄️ Daten](#-daten)
 <br><br><br><br>
 <hr>
 <br>
 <br><br>
 
-<div aling="center">
+<div align="center">
 <h2>🚀 Start</h2>
 </div>
 
 1. **Download:** Lade die bot.py Datei herunter
-2. **Bearbeiten:** Öffne die Datei in einem Editor deiner Wahl und Füge die Daten (unten aufgezählt) ein.
+2. **Bearbeiten:** Öffne die Datei in einem Editor deiner Wahl und Trage die Daten (unten aufgezählt) ein.
 3. **Starten:** Gehe in den Datei Pfad und Starte deine bot.py **Fertig!**
 
 <br><br><br><br>
-## 🗄️ Daten
 
-| Zeile | Variable | Name | Beschreibung | Beispiel |
-| ----- | -------- | ---- | ------------ | -------- |
-| 15 | DISCORD_BOT_TOKEN | Discord Bot Token | Dein Bot Token | Eine Lange zufällige zeichen folge. |
-| 18 | STATUSPAGE_NAME | Statuspage Name | Die Subdomain deiner Status Seite | 
+<div align="center">
+<h2>🗄️ Daten</h2>
+</div>
+<br><br>
+
+| Zeile | Variable | Name | Beschreibung |
+| ----- | -------- | ---- | ------------ |
+| 15 | DISCORD_BOT_TOKEN | Discord Bot Token | Dein Bot Token |
+| 18 | STATUSPAGE_NAME | Statuspage Name | Die Subdomain deiner Status Seite |
+| 21 | LIVE_STATUS_BANNER | Live Status Banner URL | Die URL, zu deinem Banner für das Live Status Embed |
+| 22 | HISTORY_VORFAELLE_BANNER | Vergangene Vorfälle Banner URL | Die URL, zu deinem Banner für das Vergangene Vorfälle Embed |
+| 24 | INCIDENT_CHANNEL_ID | Vorfall Kanal ID | Die Kanal ID des Kanals, in dem über Neue Vorfälle informiert werden soll. |
+| 25 | DASHBOARD_CHANNEL_ID | Live Status Anzeige Kanal | Kanal in den ein Embed mit einer Live Übersicht über den Aktuellen Status der Componenten |
+| 28 | operational_emoji | Operational Emoji | Emoji, der Angezeigt wird, wenn das System Inordnung ist. |
+| 29 | degraded_performance_emoji | Eingeschränkte Leistung Emoji | Emoji Emoji, der Angezeigt wird, wenn das System eingeschränkte Leistungen aufweist. |
+| 30 | partial_outage_emoji | Teilausfall Emoji | Emoji, der Angezeigt wird, wenn das System Teilausfälle aufweist. |
+| 31 | major_outage_emoji | Großer Ausfall Emoji | Emoji, der Angezeigt wird, wenn das System einen Ausfall aufweist. |
+| 32 | under_maintenance_emoji | Wartungsarbeiten Emoji | Emoji, der Angezeigt wird, wenn das System Gewartet wird. |
+<br><br>
