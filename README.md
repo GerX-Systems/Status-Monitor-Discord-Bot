@@ -10,11 +10,9 @@
 <br>
 <div align="center">
   
-![Version](https://badgen.net/github/release/Gerx-Systems/Status-Monitor-Discord-Bot/main)
-![Releases](https://badgen.net/github/releases/GerX-Systems/Status-Monitor-Discord-Bot)
-![Tag](https://badgen.net/github/tag/GerX-Systems/Status-Monitor-Discord-Bot)
+![Version](https://badgen.net/github/tag/Gerx-Systems/Status-Monitor-Discord-Bot)
+![Releases](https://badgen.net/github/release/GerX-Systems/Status-Monitor-Discord-Bot)
 ![Stars](https://badgen.net/github/stars/GerX-Systems/Status-Monitor-Discord-Bot)
-![Downloads](https://badgen.net/github/dt/GerX-Systems/Status-Monitor-Discord-Bot)
 
 
 </div>
