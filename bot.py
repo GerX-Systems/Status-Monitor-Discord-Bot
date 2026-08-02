@@ -11,34 +11,25 @@ from datetime import datetime
 # ==========================================
 # KONFIGURATION
 # ==========================================
-# BOT TOKEN: am besten über Umgebungsvariable setzen
-DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN', 'DEIN_DISCORD_BOT_TOKEN_HIER')
+# BOT TOKEN HIER EINTRAGEN
+DISCORD_BOT_TOKEN = 'DEIN_DISCORD_BOT_TOKEN_HIER' 
 
 # Status Page Namen Eintragen (den vor der Domain: [Der Statuspage Name].statuspage.io)
-STATUSPAGE_NAME = os.getenv('STATUSPAGE_NAME', 'DEIN_STATUSPAGE_NAME_HIER')
+STATUSPAGE_NAME = 'DEIN_STATUSPAGE_NAME_HIER'
 
-# Banner URLs (optional)
-LIVE_STATUS_BANNER = os.getenv('LIVE_STATUS_BANNER', '')
-HISTORY_VORFAELLE_BANNER = os.getenv('HISTORY_VORFAELLE_BANNER', '')
+# Banner URLs
+LIVE_STATUS_BANNER = DEINE_LIVE_STATUS_BANNER_URL
+HISTORY_VORFAELLE_BANNER = DEINE_HISTORY_BANNER_URL
 
-# Channel IDs: am besten als Umgebungsvariablen (oder hier als int eintragen)
-_incident_channel = os.getenv('INCIDENT_CHANNEL_ID')
-_dashboard_channel = os.getenv('DASHBOARD_CHANNEL_ID')
-try:
-    INCIDENT_CHANNEL_ID = int(_incident_channel) if _incident_channel else None
-except Exception:
-    INCIDENT_CHANNEL_ID = None
-try:
-    DASHBOARD_CHANNEL_ID = int(_dashboard_channel) if _dashboard_channel else None
-except Exception:
-    DASHBOARD_CHANNEL_ID = None
+INCIDENT_CHANNEL_ID = DEINE_VORFALLS_KANAL_ID_HIER
+DASHBOARD_CHANNEL_ID = DEINE_LIVE_STATUS_ANZEIGE_ID_HIER
 
-# Emojis (sinnvolle Defaults, können per ENV angepasst werden)
-operational_emoji = os.getenv('OPERATIONAL_EMOJI', '🟢')
-degraded_performance_emoji = os.getenv('DEGRADED_PERFORMANCE_EMOJI', '🟡')
-partial_outage_emoji = os.getenv('PARTIAL_OUTAGE_EMOJI', '🟠')
-major_outage_emoji = os.getenv('MAJOR_OUTAGE_EMOJI', '🔴')
-under_maintenance_emoji = os.getenv('UNDER_MAINTENANCE_EMOJI', '🛠️')
+# Emojis (WICHTIG!!!)
+operational_emoji = BETRIEBSBERIET_EMOJI_HIER
+degraded_performance_emoji = SCHLECHTE_VERBINDUNGS_EMOJI
+partial_outage_emoji = TEILAUSFALL_EMOJI_HIER
+major_outage_emoji = AUSFALL_EMOJI_HIER
+under_maintenance_emoji = WARTUNGS_ARBEITEN_EMOJI_HIER
 
 
 # =========================================
@@ -73,7 +64,6 @@ def translate(word):
     return TRANSLATIONS.get(word.lower(), word.capitalize())
 
 def get_color_for_indicator(indicator):
-    if not indicator: return 0x95a5a6
     colors = {
         'none': 0x2ecc71,      # Grün
         'resolved': 0x2ecc71,  # Grün
@@ -83,9 +73,7 @@ def get_color_for_indicator(indicator):
         'maintenance': 0x3498db # Blau
     }
     return colors.get(indicator.lower(), 0x95a5a6)
-
 def get_emoji_for_component(status):
-    if not status: return "❔"
     emojis = {
         "operational": f"{operational_emoji}",
         "degraded_performance": f"{degraded_performance_emoji}",
@@ -144,7 +132,7 @@ async def on_ready():
     
     # 1. Alte Dashboard-Nachricht löschen, um Hänger zu vermeiden
     msg_id = last_state.get("overview_message_id")
-    if msg_id and DASHBOARD_CHANNEL_ID:
+    if msg_id:
         print("Lösche alte Dashboard-Nachricht für einen sauberen Neustart...")
         try:
             route = Route('DELETE', f'/channels/{DASHBOARD_CHANNEL_ID}/messages/{msg_id}')
@@ -169,11 +157,7 @@ async def on_interaction(interaction):
     if interaction.type != discord.InteractionType.component:
         return
 
-    custom_id = None
-    try:
-        custom_id = interaction.data.get("custom_id", "")
-    except Exception:
-        custom_id = ""
+    custom_id = interaction.data.get("custom_id", "")
     
     if custom_id == "show_history" or custom_id.startswith("history_page_"):
         page = 0
@@ -327,7 +311,7 @@ async def check_status():
         scheduled_maintenances = data.get('scheduled_maintenances', [])
         
         status_changed = False
-        incident_channel = bot.get_channel(INCIDENT_CHANNEL_ID) if INCIDENT_CHANNEL_ID else None
+        incident_channel = bot.get_channel(INCIDENT_CHANNEL_ID)
 
         # 1. Gesamt-Status & Vorfall-Updates prüfen (Für den Incident Channel)
         if current_status.get('indicator') != last_state['indicator']:
@@ -341,8 +325,7 @@ async def check_status():
                     )
                     embed.add_field(name="Neuer Status", value=translate(current_status.get('indicator', 'none')), inline=False)
                     await incident_channel.send(embed=embed)
-                except Exception:
-                    pass
+                except Exception: pass
             
             last_state['indicator'] = current_status.get('indicator')
             last_state['description'] = current_status.get('description')
@@ -350,9 +333,7 @@ async def check_status():
 
         current_incident_ids = []
         for incident in incidents:
-            incident_id = incident.get('id')
-            if not incident_id:
-                continue
+            incident_id = incident['id']
             current_incident_ids.append(incident_id)
             latest_update = incident.get('incident_updates', [{}])[0]
             update_id = latest_update.get('id')
@@ -364,7 +345,7 @@ async def check_status():
                         impact = incident.get('impact', 'none')
                         color_key = 'resolved' if incident.get('status') == 'resolved' else impact
                         embed = discord.Embed(
-                            title=f"🚨 Vorfall Update: {incident.get('name', 'Unbekannter Vorfall')}",
+                            title=f"🚨 Vorfall Update: {incident['name']}",
                             url=incident.get('shortlink'),
                             color=get_color_for_indicator(color_key),
                             timestamp=datetime.utcnow()
@@ -374,8 +355,7 @@ async def check_status():
                         if latest_update.get('body'):
                             embed.add_field(name="Letztes Update", value=latest_update.get('body'), inline=False)
                         await incident_channel.send(embed=embed)
-                    except Exception:
-                        pass
+                    except Exception: pass
                 
                 last_state['known_incidents'][incident_id] = {'status': incident.get('status'), 'last_update_id': update_id}
                 status_changed = True
@@ -391,17 +371,17 @@ async def check_status():
         
         description_lines = []
         for group in groups:
-            description_lines.append(f"\n**{group.get('name', 'Unbenannte Gruppe')}**")
-            group_comps = [c for c in components if c.get('group_id') == group.get('id')]
+            description_lines.append(f"\n**{group['name']}**")
+            group_comps = [c for c in components if c.get('group_id') == group['id']]
             for comp in group_comps:
                 c_emoji = get_emoji_for_component(comp.get('status', 'unknown'))
-                description_lines.append(f"> {c_emoji} {comp.get('name', 'Unbenannter Dienst')}: *{translate(comp.get('status', 'unknown'))}*")
+                description_lines.append(f"> {c_emoji} {comp['name']}: *{translate(comp.get('status', 'unknown'))}*")
                 
         if ungrouped:
             if groups: description_lines.append("\n**Weitere Dienste:**")
             for comp in ungrouped:
                 c_emoji = get_emoji_for_component(comp.get('status', 'unknown'))
-                description_lines.append(f"> {c_emoji} {comp.get('name', 'Unbenannter Dienst')}: *{translate(comp.get('status', 'unknown'))}*")
+                description_lines.append(f"> {c_emoji} {comp['name']}: *{translate(comp.get('status', 'unknown'))}*")
                 
         dynamic_text = "\n".join(description_lines)
 
@@ -432,7 +412,7 @@ async def check_status():
             start_ts = parse_iso_time(active_maintenance.get('scheduled_for'))
             end_ts = parse_iso_time(active_maintenance.get('scheduled_until'))
             desc = active_maintenance.get('incident_updates', [{}])[0].get('body', 'Keine Beschreibung verfügbar.')
-            affected_comps = ", ".join([c.get('name', '') for c in active_maintenance.get('components', [])]) or "Keine spezifischen"
+            affected_comps = ", ".join([c['name'] for c in active_maintenance.get('components', [])]) or "Keine spezifischen"
 
             maint_content = f"### {under_maintenance_emoji} Geplante Wartungsarbeiten\n**Beginn:** <t:{start_ts}:f>\n**Ende:** <t:{end_ts}:f>\n**Beschreibung:** {desc}\n**Betroffene Systeme:** {affected_comps}"
             v2_items.extend([
@@ -472,27 +452,22 @@ async def check_status():
 
         try:
             msg_id = last_state.get("overview_message_id")
-            if not DASHBOARD_CHANNEL_ID:
-                print("DASHBOARD_CHANNEL_ID ist nicht konfiguriert; überspringe Dashboard-Update.")
+            if msg_id:
+                route = Route('PATCH', f'/channels/{DASHBOARD_CHANNEL_ID}/messages/{msg_id}')
+                await bot.http.request(route, json=v2_payload)
+                print(f"Dashboard erfolgreich aktualisiert. Nächstes Update in {CHECK_INTERVAL_SECONDS} Sekunden.")
             else:
-                if msg_id:
-                    route = Route('PATCH', f'/channels/{DASHBOARD_CHANNEL_ID}/messages/{msg_id}')
-                    await bot.http.request(route, json=v2_payload)
-                    print(f"Dashboard erfolgreich aktualisiert. Nächstes Update in {CHECK_INTERVAL_SECONDS} Sekunden.")
-                else:
-                    route = Route('POST', f'/channels/{DASHBOARD_CHANNEL_ID}/messages')
-                    response = await bot.http.request(route, json=v2_payload)
-                    # response ist ein dict mit message-Daten
-                    last_state["overview_message_id"] = response.get("id")
-                    save_state()
-                    print("Neues Dashboard erfolgreich gesendet.")
-        except discord.NotFound:
-            print("Nachricht nicht gefunden. Erstelle neue...")
-            if DASHBOARD_CHANNEL_ID:
                 route = Route('POST', f'/channels/{DASHBOARD_CHANNEL_ID}/messages')
                 response = await bot.http.request(route, json=v2_payload)
-                last_state["overview_message_id"] = response.get("id")
+                last_state["overview_message_id"] = response["id"]
                 save_state()
+                print("Neues Dashboard erfolgreich gesendet.")
+        except discord.NotFound:
+            print("Nachricht nicht gefunden. Erstelle neue...")
+            route = Route('POST', f'/channels/{DASHBOARD_CHANNEL_ID}/messages')
+            response = await bot.http.request(route, json=v2_payload)
+            last_state["overview_message_id"] = response["id"]
+            save_state()
         except discord.HTTPException as e:
             print(f"Discord API Fehler beim Dashboard-Update: {e}")
 
@@ -504,7 +479,7 @@ async def check_status():
         traceback.print_exc()
 
 if __name__ == "__main__":
-    if not DISCORD_BOT_TOKEN or DISCORD_BOT_TOKEN.startswith('DEIN'):
-        print("FEHLER: Bitte trage zuerst deinen DISCORD_BOT_TOKEN als Umgebungsvariable DISCORD_BOT_TOKEN ein oder passe ihn im Code an!")
+    if DISCORD_BOT_TOKEN == 'DEIN_BOT_TOKEN_HIER':
+        print("FEHLER: Bitte trage zuerst deinen DISCORD_BOT_TOKEN in Zeile 16 im Code ein!")
     else:
         bot.run(DISCORD_BOT_TOKEN)
