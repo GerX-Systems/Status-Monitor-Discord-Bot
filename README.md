@@ -27,8 +27,34 @@
 </div>
 <br>
 <br>
-<div aling="center">
+<div align="center">
+<h1>Willkommen!</h1>
+</div>
+<br><br>
+<div align="center">
+<h2>📑 Inhalt</h2>
+</div>
+<br><br>
 
-# Willkommen!
+- [🚀 Start](#-start)
+-
+<br><br><br><br>
+<hr>
+<br>
+<br><br>
+
+<div aling="center">
+<h2>🚀 Start</h2>
 </div>
 
+1. **Download:** Lade die bot.py Datei herunter
+2. **Bearbeiten:** Öffne die Datei in einem Editor deiner Wahl und Füge die Daten (unten aufgezählt) ein.
+3. **Starten:** Gehe in den Datei Pfad und Starte deine bot.py **Fertig!**
+
+<br><br><br><br>
+## 🗄️ Daten
+
+| Zeile | Variable | Name | Beschreibung | Beispiel |
+| ----- | -------- | ---- | ------------ | -------- |
+| 15 | DISCORD_BOT_TOKEN | Discord Bot Token | Dein Bot Token | Eine Lange zufällige zeichen folge. |
+| 18 | STATUSPAGE_NAME | Statuspage Name | Die Subdomain deiner Status Seite | 
