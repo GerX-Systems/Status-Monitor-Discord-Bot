@@ -199,7 +199,7 @@ async def on_interaction(interaction):
         page_months = months_list[start_idx:end_idx]
         
         dynamic_history_components = []
-        months_names = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "", "Dezember"]
+        months_names = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
         
         for idx, (year, month) in enumerate(page_months):
             month_name = f"{months_names[month]} {year}"
@@ -214,12 +214,12 @@ async def on_interaction(interaction):
                         inc_in_month.append(inc)
             
             if not inc_in_month:
-                content_lines.append("Keine Vorfälle\n")
+                content_lines.append("No incidents\n")
             else:
                 for inc in inc_in_month:
-                    title = inc.get('name', 'Unbekannter Vorfall')
+                    title = inc.get('name', 'Unknown incident')
                     link = inc.get('shortlink', '')
-                    desc = inc.get('incident_updates', [{}])[0].get('body', 'Keine Details verfügbar.')
+                    desc = inc.get('incident_updates', [{}])[0].get('body', 'No details available.')
                     if len(desc) > 120: desc = desc[:117] + "..."
                     ts = parse_iso_time(inc.get('resolved_at') or inc.get('created_at'))
                     inc_dt = datetime.fromtimestamp(ts)
@@ -286,22 +286,22 @@ async def on_interaction(interaction):
         try:
             await bot.http.request(route, json=payload)
         except Exception as e:
-            print(f"Fehler beim Senden des History-Embeds: {e}")
+            print(f"Error sending history embed: {e}")
 
 @tasks.loop(seconds=CHECK_INTERVAL_SECONDS)
 async def check_status():
     try:
-        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Rufe Statuspage-Daten ab...")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Retrieving status page data...")
         
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(STATUSPAGE_URL) as response:
                     if response.status != 200:
-                        print(f"API Fehler: Status {response.status}")
+                        print(f"API Error: Status {response.status}")
                         return
                     data = await response.json()
         except Exception as e:
-            print(f"Fehler bei der Verbindung zur Statuspage: {e}")
+            print(f"Error connecting to the status page: {e}")
             return
 
         current_status = data.get('status', {})
@@ -313,17 +313,17 @@ async def check_status():
         status_changed = False
         incident_channel = bot.get_channel(INCIDENT_CHANNEL_ID)
 
-        # 1. Gesamt-Status & Vorfall-Updates prüfen (Für den Incident Channel)
+        # 1. Check overall status and incident updates (for the Incident Channel)
         if current_status.get('indicator') != last_state['indicator']:
             if incident_channel:
                 try:
                     embed = discord.Embed(
-                        title="Systemstatus Update",
-                        description=f"Der Gesamtstatus für **{page_info.get('name')}** hat sich geändert.",
+                        title="System status update",
+                        description=f"The overall status for **{page_info.get('name')}** has changed.",
                         color=get_color_for_indicator(current_status.get('indicator', 'none')),
                         timestamp=datetime.utcnow()
                     )
-                    embed.add_field(name="Neuer Status", value=translate(current_status.get('indicator', 'none')), inline=False)
+                    embed.add_field(name="New status", value=translate(current_status.get('indicator', 'none')), inline=False)
                     await incident_channel.send(embed=embed)
                 except Exception: pass
             
@@ -345,15 +345,15 @@ async def check_status():
                         impact = incident.get('impact', 'none')
                         color_key = 'resolved' if incident.get('status') == 'resolved' else impact
                         embed = discord.Embed(
-                            title=f"🚨 Vorfall Update: {incident['name']}",
+                            title=f"🚨 Incident Update: {incident['name']}",
                             url=incident.get('shortlink'),
                             color=get_color_for_indicator(color_key),
                             timestamp=datetime.utcnow()
                         )
                         embed.add_field(name="Status", value=translate(incident.get('status', 'unknown')), inline=True)
-                        embed.add_field(name="Auswirkung", value=translate(impact), inline=True)
+                        embed.add_field(name="Impact", value=translate(impact), inline=True)
                         if latest_update.get('body'):
-                            embed.add_field(name="Letztes Update", value=latest_update.get('body'), inline=False)
+                            embed.add_field(name="Last update", value=latest_update.get('body'), inline=False)
                         await incident_channel.send(embed=embed)
                     except Exception: pass
                 
@@ -365,7 +365,7 @@ async def check_status():
             del last_state['known_incidents'][i_id]
             status_changed = True
 
-        # 2. Live Übersicht für das Dashboard aufbauen
+        # 2. Build a live overview for the dashboard
         groups = [c for c in components if c.get('group') == True]
         ungrouped = [c for c in components if not c.get('group_id') and c.get('group') == False]
         
@@ -378,7 +378,7 @@ async def check_status():
                 description_lines.append(f"> {c_emoji} {comp['name']}: *{translate(comp.get('status', 'unknown'))}*")
                 
         if ungrouped:
-            if groups: description_lines.append("\n**Weitere Dienste:**")
+            if groups: description_lines.append("\n**Other services:**")
             for comp in ungrouped:
                 c_emoji = get_emoji_for_component(comp.get('status', 'unknown'))
                 description_lines.append(f"> {c_emoji} {comp['name']}: *{translate(comp.get('status', 'unknown'))}*")
@@ -390,19 +390,19 @@ async def check_status():
         if active_inc_list:
             inc_lines = []
             for inc in active_inc_list:
-                i_name = inc.get('name', 'Unbekannter Vorfall')
+                i_name = inc.get('name', 'Unknown incident')
                 i_status = translate(inc.get('status', 'investigating'))
-                i_desc = inc.get('incident_updates', [{}])[0].get('body', 'Keine Details verfügbar.')
+                i_desc = inc.get('incident_updates', [{}])[0].get('body', 'No details available.')
                 inc_lines.append(f"🚨 **{i_name}**\n> **Status:** {i_status}\n> {i_desc}\n")
             active_incidents_text = "\n\n" + "\n".join(inc_lines)
 
-        # WICHTIG: Timestamp für die ZUKUNFT berechnen (für den Countdown: "in 5 Minuten")
+        # IMPORTANT: Calculate a timestamp for the FUTURE (for the countdown: "in 5 minutes")
         next_update_ts = int(time.time() + CHECK_INTERVAL_SECONDS)
 
         v2_items = [
             {"type": 12, "items": [{"media": {"url": f"{LIVE_STATUS_BANNER}"}, "description": None, "spoiler": False}]},
             {"type": 14, "divider": True, "spacing": 2},
-            {"type": 10, "content": "Hier findest du Eine Live Übersicht über unsere Systeme"},
+            {"type": 10, "content": "Here you will find a live overview of our systems."},
             {"type": 14, "divider": True, "spacing": 1},
             {"type": 14, "divider": False, "spacing": 2}
         ]
@@ -411,10 +411,10 @@ async def check_status():
         if active_maintenance:
             start_ts = parse_iso_time(active_maintenance.get('scheduled_for'))
             end_ts = parse_iso_time(active_maintenance.get('scheduled_until'))
-            desc = active_maintenance.get('incident_updates', [{}])[0].get('body', 'Keine Beschreibung verfügbar.')
-            affected_comps = ", ".join([c['name'] for c in active_maintenance.get('components', [])]) or "Keine spezifischen"
+            desc = active_maintenance.get('incident_updates', [{}])[0].get('body', 'No description available.')
+            affected_comps = ", ".join([c['name'] for c in active_maintenance.get('components', [])]) or "No specific"
 
-            maint_content = f"### {under_maintenance_emoji} Geplante Wartungsarbeiten\n**Beginn:** <t:{start_ts}:f>\n**Ende:** <t:{end_ts}:f>\n**Beschreibung:** {desc}\n**Betroffene Systeme:** {affected_comps}"
+            maint_content = f"### {under_maintenance_emoji} Planned maintenance work\n**Start:** <t:{start_ts}:f>\n**End:** <t:{end_ts}:f>\n**Description:** {desc}\n**Affected systems:** {affected_comps}"
             v2_items.extend([
                 {"type": 10, "content": maint_content},
                 {"type": 14, "divider": True, "spacing": 1},
@@ -422,19 +422,19 @@ async def check_status():
             ])
 
         v2_items.extend([
-            {"type": 10, "content": f"**Gesamt Status:** {translate(current_status.get('indicator', 'none'))}{active_incidents_text}\n{dynamic_text}"},
+            {"type": 10, "content": f"**Overall status:** {translate(current_status.get('indicator', 'none'))}{active_incidents_text}\n{dynamic_text}"},
             {"type": 14, "divider": False, "spacing": 2},
             {"type": 14, "divider": True, "spacing": 2},
             {
                 "type": 1,
                 "components": [
                     {
-                        "type": 2, "style": 5, "label": "Status Seite",
+                        "type": 2, "style": 5, "label": "Status Page",
                         "emoji": {"name": "info", "id": "1533144603283165184"},
                         "disabled": False, "url": f"https://{STATUSPAGE_NAME}.statuspage.io/"
                     },
                     {
-                        "type": 2, "style": 2, "label": "Vergangene Vorfälle",
+                        "type": 2, "style": 2, "label": "Past incidents",
                         "custom_id": "show_history",
                         "emoji": {"name": "history", "id": "1533150527418793984"},
                         "disabled": False
@@ -442,7 +442,7 @@ async def check_status():
                 ]
             },
             {"type": 14, "divider": True, "spacing": 1},
-            {"type": 10, "content": f"Aktualisiert <t:{next_update_ts}:R>"}
+            {"type": 10, "content": f"Updated <t:{next_update_ts}:R>"}
         ])
 
         v2_payload = {
@@ -455,31 +455,31 @@ async def check_status():
             if msg_id:
                 route = Route('PATCH', f'/channels/{DASHBOARD_CHANNEL_ID}/messages/{msg_id}')
                 await bot.http.request(route, json=v2_payload)
-                print(f"Dashboard erfolgreich aktualisiert. Nächstes Update in {CHECK_INTERVAL_SECONDS} Sekunden.")
+                print(f"Dashboard successfully updated. Next update in {CHECK_INTERVAL_SECONDS} seconds.")
             else:
                 route = Route('POST', f'/channels/{DASHBOARD_CHANNEL_ID}/messages')
                 response = await bot.http.request(route, json=v2_payload)
                 last_state["overview_message_id"] = response["id"]
                 save_state()
-                print("Neues Dashboard erfolgreich gesendet.")
+                print("New dashboard successfully sent.")
         except discord.NotFound:
-            print("Nachricht nicht gefunden. Erstelle neue...")
+            print("Message not found. Create new one...")
             route = Route('POST', f'/channels/{DASHBOARD_CHANNEL_ID}/messages')
             response = await bot.http.request(route, json=v2_payload)
             last_state["overview_message_id"] = response["id"]
             save_state()
         except discord.HTTPException as e:
-            print(f"Discord API Fehler beim Dashboard-Update: {e}")
+            print(f"Discord API error during dashboard update: {e}")
 
         if status_changed:
             save_state()
             
     except Exception as e:
-        print(f"🚨 Schwerwiegender Fehler im Loop (wird ignoriert, Bot läuft weiter): {e}")
+        print(f"🚨 Critical error in the loop (ignored, bot continues running): {e}")
         traceback.print_exc()
 
 if __name__ == "__main__":
-    if DISCORD_BOT_TOKEN == 'DEIN_BOT_TOKEN_HIER':
-        print("FEHLER: Bitte trage zuerst deinen DISCORD_BOT_TOKEN in Zeile 16 im Code ein!")
+    if DISCORD_BOT_TOKEN == 'YOUR_BOT_TOKEN_HERE':
+        print("ERROR: Please enter your DISCORD_BOT_TOKEN in line 16 of the code first!")
     else:
         bot.run(DISCORD_BOT_TOKEN)
