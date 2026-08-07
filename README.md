@@ -26,19 +26,18 @@
 <br>
 <br>
 <div align="center">
-<h1>Willkommen!</h1>
-<p><strong>HINWEIS:</strong> Es ist eine Status Webseite auf <a href="https://statuspage.io/">statuspage.io</a> Notwendig!</p>
-<p><strong>AI:</strong> Teile des Codes wurden mit KI Erstellt/Bearbeitet.</p>
+<h1>Welcome!</h1>
+<p><strong>NOTICE:</strong> A status page on <a href="https://statuspage.io/">statuspage.io</a>  is required.</p><p><strong>AI:</strong> Parts of the code were created/edited using AI.</p>
 </div>
 <br><br>
 <div align="center">
-<h2>📑 Inhalt</h2>
+<h2>📑 Content</h2>
 </div>
 <br><br>
 
 - [🚀 Start](#-start)
-- [🗄️ Daten](#-daten)
-- [👥 Mitwirkende](#-mitwirkende)
+- [🗄️ Data](#-data)
+- [👥 Contributors](#-contributors)
 <br><br><br><br>
 <hr>
 <br>
@@ -55,7 +54,7 @@
 <br><br><br><br>
 
 <div align="center">
-<h2>🗄️ Daten</h2>
+<h2>🗄️ Data</h2>
 </div>
 <br><br>
 
@@ -77,7 +76,7 @@
 <br><br><br><br>
 
 <div align="center">
-<h2>👥 Mitwirkende</h2>
+<h2>👥 Contributors</h2>
 </div>
 <br><br>
 
