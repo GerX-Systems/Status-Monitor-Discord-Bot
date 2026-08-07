@@ -36,7 +36,7 @@
 <br><br>
 
 - [🚀 Start](#-start)
-- [🗄️ Data](#-data)
+- [🗄️ Data](#-variablen)
 - [👥 Contributors](#-contributors)
 <br><br><br><br>
 <hr>
@@ -54,23 +54,24 @@
 <br><br><br><br>
 
 <div align="center">
-<h2>🗄️ Data</h2>
+<h2>🗄️ Variablen</h2>
 </div>
 <br><br>
 
-| Zeile | Variable | Name | Beschreibung |
-| ----- | -------- | ---- | ------------ |
-| 15 | DISCORD_BOT_TOKEN | Discord Bot Token | Dein Bot Token |
-| 18 | STATUSPAGE_NAME | Statuspage Name | Die Subdomain deiner Status Seite |
-| 21 | LIVE_STATUS_BANNER | Live Status Banner URL | Die URL, zu deinem Banner für das Live Status Embed |
-| 22 | HISTORY_VORFAELLE_BANNER | Vergangene Vorfälle Banner URL | Die URL, zu deinem Banner für das Vergangene Vorfälle Embed |
-| 24 | INCIDENT_CHANNEL_ID | Vorfall Kanal ID | Die Kanal ID des Kanals, in dem über Neue Vorfälle informiert werden soll. |
-| 25 | DASHBOARD_CHANNEL_ID | Live Status Anzeige Kanal | Kanal in den ein Embed mit einer Live Übersicht über den Aktuellen Status der Componenten |
-| 28 | operational_emoji | Operational Emoji | Emoji, der Angezeigt wird, wenn das System Inordnung ist. |
-| 29 | degraded_performance_emoji | Eingeschränkte Leistung Emoji | Emoji Emoji, der Angezeigt wird, wenn das System eingeschränkte Leistungen aufweist. |
-| 30 | partial_outage_emoji | Teilausfall Emoji | Emoji, der Angezeigt wird, wenn das System Teilausfälle aufweist. |
-| 31 | major_outage_emoji | Großer Ausfall Emoji | Emoji, der Angezeigt wird, wenn das System einen Ausfall aufweist. |
-| 32 | under_maintenance_emoji | Wartungsarbeiten Emoji | Emoji, der Angezeigt wird, wenn das System Gewartet wird. |
+
+| Row | Variable | Name | Description |
+| ---- | -------- | ---- | ----------- |
+| 15 | DISCORD_BOT_TOKEN | Discord Bot Token | Your bot token |
+| 18 | STATUSPAGE_NAME | Statuspage Name | The subdomain of your status page |
+| 21 | LIVE_STATUS_BANNER | Live Status Banner URL | The URL to your banner for the Live Status embed |
+| 22 | HISTORY_VORFAELLE_BANNER | Past Incidents Banner URL | The URL to your banner for the Past Incidents embed |
+| 24 | INCIDENT_CHANNEL_ID | Incident Channel ID | The channel ID of the channel where new incidents should be reported |
+| 25 | DASHBOARD_CHANNEL_ID | Live Status Display Channel | Channel where an embed with a live overview of the current status of the components is posted |
+| 28 | operational_emoji | Operational Emoji | Emoji shown when the system is operational |
+| 29 | degraded_performance_emoji | Degraded Performance Emoji | Emoji shown when the system is experiencing degraded performance |
+| 30 | partial_outage_emoji | Partial Outage Emoji | Emoji shown when the system is experiencing partial outages |
+| 31 | major_outage_emoji | Major Outage Emoji | Emoji shown when the system is experiencing a major outage |
+| 32 | under_maintenance_emoji | Under Maintenance Emoji | Emoji shown when the system is under maintenance |
 
 <br><br>
 <br><br><br><br>
