@@ -1,0 +1,22 @@
+{
+  "name": "status-monitor-setup",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "node cli.js",
+    "setup:js": "node cli.js",
+    "setup:ts": "ts-node --esm cli.ts",
+    "setup:tsx": "tsx cli.ts"
+  },
+  "dependencies": {
+    "inquirer": "^9.2.7"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2",
+    "tsx": "^3.12.7",
+    "@types/node": "^20.4.2",
+    "@types/inquirer": "^9.0.6"
+  }
+}
