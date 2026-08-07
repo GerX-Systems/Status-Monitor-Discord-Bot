@@ -43,20 +43,20 @@ STATE_FILE = './status_state.json'
 # ÜBERSETZUNGEN & EMOJIS
 # ==========================================
 TRANSLATIONS = {
-    "none": "Alle Systeme betriebsbereit",
-    "minor": "Geringe Einschränkung",
-    "major": "Großer Ausfall",
-    "critical": "Kritischer Ausfall",
-    "maintenance": "Wartungsarbeiten",
-    "investigating": "Wird untersucht",
-    "identified": "Ursache identifiziert",
-    "monitoring": "Wird beobachtet",
-    "resolved": "Behoben",
-    "operational": "Betriebsbereit",
-    "degraded_performance": "Eingeschränkte Leistung",
-    "partial_outage": "Teilweiser Ausfall",
-    "major_outage": "Schwerer Ausfall",
-    "under_maintenance": "Wartungsarbeiten"
+    "none": "All systems are operational",
+    "minor": "Minor restriction",
+    "major": "Major outage",
+    "critical": "Critical failure",
+    "maintenance": "Maintenance work",
+    "investigating": "Will be examined",
+    "identified": "Cause identified",
+    "monitoring": "It is being observed.",
+    "resolved": "Fixed",
+    "operational": "Operational",
+    "degraded_performance": "Limited performance",
+    "partial_outage": "Partial failure",
+    "major_outage": "Severe failure",
+    "under_maintenance": "Maintenance work"
 }
 
 def translate(word):
@@ -110,14 +110,14 @@ def load_state():
                 loaded = json.load(f)
                 last_state.update(loaded)
     except Exception as e:
-        print(f"Fehler beim Laden des Status: {e}")
+        print(f"Error loading status: {e}")
 
 def save_state():
     try:
         with open(STATE_FILE, 'w', encoding='utf-8') as f:
             json.dump(last_state, f, indent=4)
     except Exception as e:
-        print(f"Fehler beim Speichern des Status: {e}")
+        print(f"Error saving status: {e}")
 
 # ==========================================
 # DISCORD BOT SETUP
@@ -127,29 +127,29 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] Eingeloggt als {bot.user} (ID: {bot.user.id})")
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] Logged in as {bot.user} (ID: {bot.user.id})")
     load_state()
     
-    # 1. Alte Dashboard-Nachricht löschen, um Hänger zu vermeiden
+    # 1. Delete old dashboard messages to avoid freezes
     msg_id = last_state.get("overview_message_id")
     if msg_id:
-        print("Lösche alte Dashboard-Nachricht für einen sauberen Neustart...")
+        print("Delete old dashboard message for a clean restart...")
         try:
             route = Route('DELETE', f'/channels/{DASHBOARD_CHANNEL_ID}/messages/{msg_id}')
             await bot.http.request(route)
-            print("Alte Nachricht erfolgreich gelöscht.")
+            print("Old message successfully deleted.")
         except discord.NotFound:
-            print("Alte Nachricht war bereits gelöscht.")
+            print("The old message had already been deleted.")
         except Exception as e:
-            print(f"Konnte alte Nachricht nicht löschen (Fehler ignoriert): {e}")
+            print(f"Could not delete old message (error ignored): {e}")
         
-        # ID zurücksetzen, damit er gleich eine Neue postet
+        # Reset the ID so he can post a new one right away.
         last_state["overview_message_id"] = None
         save_state()
 
-    # 2. Schleife starten
+    # 2. Start loop
     if not check_status.is_running():
-        print("Starte 5-Minuten Überprüfungsschleife...")
+        print("Start 5-minute verification loop...")
         check_status.start()
 
 @bot.event
@@ -181,7 +181,7 @@ async def on_interaction(interaction):
         past_incidents = [i for i in all_incidents if i.get('status') in ['resolved', 'postmortem']]
         current_dt = datetime.now()
         
-        # Generiere IMMER genau 12 Monate rückwärts ab dem aktuellen Monat
+        # Always generate exactly 12 months backwards from the current month.
         months_list = []
         curr = current_dt
         for _ in range(12):
@@ -199,7 +199,7 @@ async def on_interaction(interaction):
         page_months = months_list[start_idx:end_idx]
         
         dynamic_history_components = []
-        months_names = ["", "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
+        months_names = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "", "Dezember"]
         
         for idx, (year, month) in enumerate(page_months):
             month_name = f"{months_names[month]} {year}"
