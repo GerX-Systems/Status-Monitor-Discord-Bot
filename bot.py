@@ -9,31 +9,31 @@ import traceback
 from datetime import datetime
 
 # ==========================================
-# KONFIGURATION
+# CONFIGURATION
 # ==========================================
-# BOT TOKEN HIER EINTRAGEN
-DISCORD_BOT_TOKEN = 'DEIN_DISCORD_BOT_TOKEN_HIER' 
+# ENTER BOT TOKEN HERE
+DISCORD_BOT_TOKEN = 'YOUR_DISCORD_BOT_TOKEN_HERE' 
 
-# Status Page Namen Eintragen (den vor der Domain: [Der Statuspage Name].statuspage.io)
+# Enter the status page name (the one before the domain: [The status page name].statuspage.io)
 STATUSPAGE_NAME = 'DEIN_STATUSPAGE_NAME_HIER'
 
 # Banner URLs
-LIVE_STATUS_BANNER = DEINE_LIVE_STATUS_BANNER_URL
-HISTORY_VORFAELLE_BANNER = DEINE_HISTORY_BANNER_URL
+LIVE_STATUS_BANNER = YOUR_LIVE_STATUS_BANNER_URL
+HISTORY_VORFAELLE_BANNER = YOUR_HISTORY_BANNER_URL
 
-INCIDENT_CHANNEL_ID = DEINE_VORFALLS_KANAL_ID_HIER
-DASHBOARD_CHANNEL_ID = DEINE_LIVE_STATUS_ANZEIGE_ID_HIER
+INCIDENT_CHANNEL_ID = YOUR_INCIDENT_CHANNEL_ID_HERE
+DASHBOARD_CHANNEL_ID = YOUR_LIVE_STATUS_DISPLAY_ID_HERE
 
-# Emojis (WICHTIG!!!)
-operational_emoji = BETRIEBSBERIET_EMOJI_HIER
-degraded_performance_emoji = SCHLECHTE_VERBINDUNGS_EMOJI
-partial_outage_emoji = TEILAUSFALL_EMOJI_HIER
-major_outage_emoji = AUSFALL_EMOJI_HIER
-under_maintenance_emoji = WARTUNGS_ARBEITEN_EMOJI_HIER
+# Emojis (IMPORTANT!!!)
+operational_emoji = OPERATIONAL_EMOJI_HERE
+degraded_performance_emoji = degraded_performance_emoji_here
+partial_outage_emoji = partial_outage_emoji_here
+major_outage_emoji = major_outage_emoji_here
+under_maintenance_emoji = under_maintenance_emoji_here
 
 
 # =========================================
-# Hier musst du Nichts Machen!
+# From here on, everything stays the same^^
 
 STATUSPAGE_URL = f'https://{STATUSPAGE_NAME}.statuspage.io/api/v2/summary.json'
 CHECK_INTERVAL_SECONDS = 300 # 5 Minuten
