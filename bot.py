@@ -15,7 +15,7 @@ from datetime import datetime
 DISCORD_BOT_TOKEN = 'YOUR_DISCORD_BOT_TOKEN_HERE' 
 
 # Enter the status page name (the one before the domain: [The status page name].statuspage.io)
-STATUSPAGE_NAME = 'DEIN_STATUSPAGE_NAME_HIER'
+STATUSPAGE_NAME = 'YOUR_STATUSPAGE_NAME_HERE'
 
 # Banner URLs
 LIVE_STATUS_BANNER = YOUR_LIVE_STATUS_BANNER_URL
