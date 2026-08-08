@@ -27,7 +27,6 @@
 <br>
 <div align="center">
 <h1>Welcome!</h1>
-<h3>NOTICE: THIS BRANCH CONTAINS UNTESTED CONTENT, USE AT YOUR OWN RISK!!!</h3>
 <p><strong>NOTICE:</strong> A status page on <a href="https://statuspage.io/">statuspage.io</a> is required.</p><p><strong>AI:</strong> Parts of the code were created/edited using AI.</p>
 </div>
 <br><br>
@@ -35,7 +34,7 @@
 ## 📑 Table of Contents
 
 - [About](#about)
-- [Start](#-start)
+- [🚀 Start](#-start)
 - [Prerequisites](#prerequisites)
 - [Quickstart](#quickstart)
 - [Configuration](#configuration)
@@ -51,45 +50,63 @@
 
 ## About
 
-This repository provides a Status Monitor Discord Bot. It includes:
+This repository provides a server-only Status Monitor Discord Bot. It includes:
 
 - An interactive setup CLI (Node.js / optional TypeScript) to generate configuration and initial translation files.
 - A Java-based Discord bot (JDA) that polls a Statuspage.io summary endpoint and posts updates to Discord channels.
 
+There is no web UI — this project runs entirely on the backend.
 
-## Start
+## 🚀 Start
 
-This project runs entirely on the server (backend-only). The following steps show how to configure, build and run the bot.
+This project runs entirely on the server (backend-only). The following steps show how to prepare, build and run the bot in the recommended order.
 
 ### Prerequisites
 - Node.js (recommended v18+) and npm — only needed to run the setup CLI
 - Java 17+ and Maven — required to build and run the Java bot
+- pm2 (optional) — recommended to run the long‑running processes in production
 
-### Quickstart
+### Recommended Startup Sequence
 
-1. Install Node dependencies (CLI only):
+Follow this order on your server:
+
+1. Install Node dependencies (CLI + helpers):
 
    npm install
 
-2. Run the interactive setup to generate `config.properties` and initial translation files under `lang/`:
+2. Build the project (compile TS, bundle assets, prepare Node scripts):
+
+   npm run build
+
+   - This builds the CLI (if TypeScript is used) and prepares any Node-side artifacts. Ensure your package.json contains a `build` script.
+
+3. Start the background process manager (pm2) and run the bot/JVM there.
+
+   Example 1 — start the Java JAR with pm2:
+
+   pm2 start --name status-monitor --interpreter none -- java -jar target/StatusMonitorDiscordBot-0.1.0-jar-with-dependencies.jar
+
+   Example 2 — start via npm script (if `start` is defined):
+
+   pm2 start npm --name status-monitor -- run start
+
+   Example 3 — using an ecosystem file (recommended for production):
+
+   pm2 start ecosystem.config.js --env production
+
+4. Run the interactive setup CLI (this writes config.properties and creates language files under `lang/`):
 
    npm run setup
 
-   - The CLI detects files under `lang/` (e.g. `lang/eng.json`, `lang/de.json`, `lang/de.conf`) and shows them in a dropdown. Choose the language/file to use.
-   - If `lang/` does not exist, the CLI will create `lang/eng.json` (English reference) and `lang/translate-example.json` by default.
+   Important: The setup CLI used here is the same CLI used for the Open Ticket functionality — it will prompt for language selection (dropdown), tokens, channel IDs, emojis, and write `translations.file` and `translations.language` into `config.properties`.
 
-3. Build the Java bot:
+5. (If necessary) Restart the pm2 process so the bot picks up the newly created config.properties:
 
-   mvn clean package
+   pm2 restart status-monitor
 
-   The artifact will be located at:
-   `target/StatusMonitorDiscordBot-0.1.0-jar-with-dependencies.jar`
-
-4. Start the bot:
-
-   java -jar target/StatusMonitorDiscordBot-0.1.0-jar-with-dependencies.jar
-
-   - The bot reads `config.properties` from the repository root and connects to Discord.
+Notes
+- The reason the CLI runs after starting pm2 is to allow the daemon/main process to be managed (and restarted) by pm2; you can run the CLI locally or via SSH on the server. After writing `config.properties`, a restart ensures the running bot loads the configuration.
+- If you prefer to run the setup locally and then push config.properties to the server, you can do that too — the key is that the running process must have access to the final `config.properties` and `lang/` files.
 
 ## Configuration
 
