@@ -1,0 +1,17 @@
+# Example config.properties (created by CLI)
+# Replace values or run the CLI to produce a filled config
+
+discord.bot.token=YOUR_DISCORD_BOT_TOKEN
+statuspage.name=YOUR_STATUSPAGE_NAME
+banner.live=https://your.cdn/live-banner.png
+banner.history=https://your.cdn/history-banner.png
+discord.channel.incident=123456789012345678
+discord.channel.dashboard=234567890123456789
+emoji.operational=✅
+emoji.degraded_performance=⚠️
+emoji.partial_outage=🟠
+emoji.major_outage=🔴
+emoji.maintenance=🔵
+check.interval.seconds=300
+translations.file=lang/translate-example.conf
+translations.language=en
