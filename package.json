@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "echo \"Build step: if you use TypeScript run 'npm run setup:ts' or configure your own build command\"",
+    "start": "java -jar target/StatusMonitorDiscordBot-0.1.0-jar-with-dependencies.jar",
     "setup": "node cli.js",
     "setup:js": "node cli.js",
     "setup:ts": "ts-node --esm cli.ts",
