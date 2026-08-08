@@ -34,7 +34,7 @@
 ## 📑 Table of Contents
 
 - [About](#about)
-- [🚀 Start](#-start)
+- [Start](#-start)
 - [Prerequisites](#prerequisites)
 - [Quickstart](#quickstart)
 - [Configuration](#configuration)
@@ -50,14 +50,13 @@
 
 ## About
 
-This repository provides a server-only Status Monitor Discord Bot. It includes:
+This repository provides a Status Monitor Discord Bot. It includes:
 
 - An interactive setup CLI (Node.js / optional TypeScript) to generate configuration and initial translation files.
 - A Java-based Discord bot (JDA) that polls a Statuspage.io summary endpoint and posts updates to Discord channels.
 
-There is no web UI — this project runs entirely on the backend.
 
-## 🚀 Start
+## Start
 
 This project runs entirely on the server (backend-only). The following steps show how to configure, build and run the bot.
 
