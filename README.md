@@ -1,84 +1,125 @@
-<div aling="center">
-  <img src="https://res.cloudinary.com/btzjbj3t/image/upload/v1785670990/Status_Monitor_Discord_Bot_1_hqiuhp.png" alt="Banner" width="100%" style="max-width: 1200px; border-radius: 10px;">
-</div>
-<br>
-<br>
-<div align="center">
+# Status Monitor Discord Bot
 
-[![GerX-Systems](https://badgen.net/static/%20/Powered%20by%20GerX%20Systems/000f80?icon=https://res.cloudinary.com/btzjbj3t/image/upload/v1783619426/gerx-systems-icon_1_eveneb.svg)](https://github.com/GerX-Systems)
-</div>
-<br>
-<div align="center">
-  
-![Version](https://badgen.net/github/tag/Gerx-Systems/Status-Monitor-Discord-Bot)
-![Releases](https://badgen.net/github/release/GerX-Systems/Status-Monitor-Discord-Bot)
-![Stars](https://badgen.net/github/stars/GerX-Systems/Status-Monitor-Discord-Bot)
+Dieses Repository enthält einen serverseitigen Setup-CLI (Node.js / optional TypeScript) zum Erzeugen einer Konfigurationsdatei und einen kompletten Discord-Bot in Java (JDA) zur Anzeige des Status einer Statuspage.
 
+Wichtig: Es gibt keine Web‑UI — alles läuft ausschließlich serverseitig / als Backend.
 
-</div>
-<div align="center">
+Voraussetzungen
+- Node.js (empfohlen 18+) und npm (nur für das Setup‑CLI)
+- Java 17+ und Maven (zum Bauen/Starten des Bots)
 
-[![Discord](https://badgen.net/badge/%20/Discord/blue?icon=discord)](https://discord.gg/C4u5Qf3sN5)
-[![Webseite](https://badgen.net/badge/🌐%20/Webseite/blue)](https://gerx-systems.de)
-[![GitHub Org](https://badgen.net/static/org/GerX%20Systems/blue)](https://github.com/GerX-Systems)
-[![Kunden Support](https://badgen.net/static/%20/E-Mail/blue?icon=maildotru)](mailto:suppot@gerx-systems.de)
-</div>
-<br>
-<br>
-<div align="center">
-<h1>Welcome!</h1>
-<p><strong>NOTICE:</strong> A status page on <a href="https://statuspage.io/">statuspage.io</a>  is required.</p><p><strong>AI:</strong> Parts of the code were created/edited using AI.</p>
-</div>
-<br><br>
-<div align="center">
-<h2>📑 Content</h2>
-</div>
-<br><br>
+Schnellstart
 
-- [🚀 Start](#-start)
-- [🗄️ Data](#-variablen)
-- [👥 Contributors](#-contributors)
-<br><br><br><br>
-<hr>
-<br>
-<br><br>
+1) Node-Abhängigkeiten installieren (nur für das CLI):
 
-<div align="center">
-<h2>🚀 Start</h2>
-</div>
+   npm install
 
-1. **Download:** Lade die bot.py Datei herunter
-2. **Bearbeiten:** Öffne die Datei in einem Editor deiner Wahl und Trage die Daten (unten aufgezählt) ein.
-3. **Starten:** Gehe in den Datei Pfad und Starte deine bot.py **Fertig!**
+2) Interaktives Setup ausführen (erzeugt `config.properties` und `translate-example.conf` im Projekt‑Root):
 
-<br><br><br><br>
+   npm run setup
 
-<div align="center">
-<h2>🗄️ Variablen</h2>
-</div>
-<br><br>
+   Alternative CLI-Varianten:
+   - npm run setup:js  (JavaScript-CLI)
+   - npm run setup:ts  (TypeScript-CLI, benötigt `ts-node` oder `tsx`)
 
+   Hinweise:
+   - `config.properties.example` ist vorhanden und wird nicht überschrieben, wenn bereits vorhanden.
+   - Die erzeugte `config.properties` enthält mindestens die folgenden Felder (durch CLI abgefragt):
+     - `discord.bot.token` — Dein Discord-Bot-Token
+     - `statuspage.name` — Subdomain der Statuspage (z. B. `example` für `example.statuspage.io`)
+     - `discord.channel.incident` — Channel-ID für Incident-Nachrichten
+     - `discord.channel.dashboard` — Channel-ID für das Dashboard
+     - Emoji-Shortcuts, Intervall, Übersetzungsdatei & Sprache
 
-| Row | Variable | Name | Description |
-| ---- | -------- | ---- | ----------- |
-| 15 | DISCORD_BOT_TOKEN | Discord Bot Token | Your bot token |
-| 18 | STATUSPAGE_NAME | Statuspage Name | The subdomain of your status page |
-| 21 | LIVE_STATUS_BANNER | Live Status Banner URL | The URL to your banner for the Live Status embed |
-| 22 | HISTORY_VORFAELLE_BANNER | Past Incidents Banner URL | The URL to your banner for the Past Incidents embed |
-| 24 | INCIDENT_CHANNEL_ID | Incident Channel ID | The channel ID of the channel where new incidents should be reported |
-| 25 | DASHBOARD_CHANNEL_ID | Live Status Display Channel | Channel where an embed with a live overview of the current status of the components is posted |
-| 28 | operational_emoji | Operational Emoji | Emoji shown when the system is operational |
-| 29 | degraded_performance_emoji | Degraded Performance Emoji | Emoji shown when the system is experiencing degraded performance |
-| 30 | partial_outage_emoji | Partial Outage Emoji | Emoji shown when the system is experiencing partial outages |
-| 31 | major_outage_emoji | Major Outage Emoji | Emoji shown when the system is experiencing a major outage |
-| 32 | under_maintenance_emoji | Under Maintenance Emoji | Emoji shown when the system is under maintenance |
+3) Java bauen:
 
-<br><br>
-<br><br><br><br>
+   mvn clean package
 
-<div align="center">
-<h2>👥 Contributors</h2>
-</div>
-<br><br>
+   Dadurch entsteht ein ausführbares Jar mit Abhängigkeiten unter `target/StatusMonitorDiscordBot-0.1.0-jar-with-dependencies.jar`.
 
-[![NilsLP25](https://badgen.net/badge/%20/NilsLP25/blue?icon=https://res.cloudinary.com/btzjbj3t/image/upload/v1784539053/Design_ohne_Titel_20260720_111700_0000_kg1djg.svg)](https://github.com/NilsLP25)
+4) Bot starten:
+
+   java -jar target/StatusMonitorDiscordBot-0.1.0-jar-with-dependencies.jar
+
+   - Der Bot liest `config.properties` aus dem Projekt‑Root beim Start.
+   - Logausgaben erscheinen in der Konsole; prüfe, ob sich der Bot mit Discord verbindet und die Statuspage‑API erfolgreich abfragen kann.
+
+Konfigurationsdateien
+- config.properties — vom CLI erzeugt (oder manuell editierbar)
+- config.properties.example — Beispielkonfiguration
+- translate-example.conf — Beispielübersetzungen im Format `lang.key=value` (z. B. `en.none=All systems...`)
+
+State & Persistenz
+- Laufzeitzustand (bekannte Incidents, Message‑IDs) wird in `status_state.json` im Projekt‑Root gespeichert.
+
+Fehlerbehebung
+- Wenn `discord.bot.token` fehlt oder ungültig ist, startet der Bot nicht.
+- Prüfe Channel‑IDs (numeric) und ob der Bot in den entsprechenden Channels Schreibrechte hat.
+- API‑Fehler der Statuspage werden in der Konsole protokolliert.
+
+Nächste Schritte / Empfehlungen
+- Optional: Validierung der CLI‑Eingaben (Token/IDs) hinzufügen.
+- Optional: Single‑message‑Update für das Dashboard statt bei jedem Check neue Nachrichten zu posten (aktuelle Implementierung sendet pro Check eine Nachricht; die Speicherung/Update‑Logik kann erweitert werden).
+
+Branch & PR
+- Diese Änderungen liegen auf dem Branch `feature/setup-cli-npm` und können via Pull Request nach `develop` gemerged werden.
+
+---
+
+## 🚀 Start
+
+This project runs entirely on the server (backend-only). The following steps show how to configure, build and run the bot.
+
+Prerequisites
+- Node.js (recommended v18+) and npm — only needed to run the setup CLI
+- Java 17+ and Maven — required to build and run the Java bot
+
+Quick start
+
+1. Install Node dependencies (CLI only):
+
+   npm install
+
+2. Run the interactive setup to generate `config.properties` and `translate-example.conf` in the repository root:
+
+   npm run setup
+
+   CLI Variants:
+   - npm run setup:js  (JavaScript CLI)
+   - npm run setup:ts  (TypeScript CLI — requires ts-node or tsx)
+
+   The generated `config.properties` includes the following keys (prompted by the CLI):
+   - `discord.bot.token` — your Discord bot token
+   - `statuspage.name` — the subdomain part of the statuspage (example for `example.statuspage.io`)
+   - `discord.channel.incident` — channel ID for incident messages
+   - `discord.channel.dashboard` — channel ID for the dashboard
+   - emoji settings, check interval, translations.file and translations.language
+
+3. Build the Java bot (produces an executable JAR with dependencies):
+
+   mvn clean package
+
+   The artifact will be located at:
+   `target/StatusMonitorDiscordBot-0.1.0-jar-with-dependencies.jar`
+
+4. Start the bot:
+
+   java -jar target/StatusMonitorDiscordBot-0.1.0-jar-with-dependencies.jar
+
+   - The bot reads `config.properties` from the project root on startup.
+   - Console logs show connection status and runtime errors.
+
+Notes
+- `translate-example.conf` is provided as an example translations file (format: `lang.key=value`, e.g. `en.none=All systems are operational`).
+- Runtime state (known incidents and message IDs) is stored in `status_state.json` in the project root.
+- Ensure the bot token and channel IDs are correct and that the bot has write permissions in the channels configured.
+
+Troubleshooting
+- If `discord.bot.token` is missing or invalid, the bot will not start.
+- Check that channel IDs are numeric and the bot user is invited to those channels.
+- API or network errors are logged to the console.
+
+If you want, I can:
+- add input validation to the CLI for token/channel ID formats,
+- implement single-message updating for the dashboard message (instead of sending a new message every interval),
+- open a Pull Request from `feature/setup-cli-npm` into `develop` for you.
