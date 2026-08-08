@@ -3,38 +3,41 @@ import fs from "fs/promises";
 import path from "path";
 
 const TRANSLATIONS_EXAMPLE = `# Example translations file
-# Format: <lang>.<key>=<translation>
+# Format: key=English phrase
+# Copy and create lang/<lang>.conf (e.g. lang/de.conf) replacing values with translations.
 
-en.none=All systems are operational
-en.minor=Minor restriction
-en.major=Major outage
-en.critical=Critical failure
-en.maintenance=Maintenance work
-en.investigating=Will be examined
-en.identified=Cause identified
-en.monitoring=It is being observed.
-en.resolved=Fixed
-en.operational=Operational
-en.degraded_performance=Limited performance
-en.partial_outage=Partial failure
-en.major_outage=Severe failure
-en.under_maintenance=Maintenance work
-
-de.none=Alle Systeme betriebsbereit
-de.minor=Kleinere Einschränkung
-de.major=Großer Ausfall
-de.critical=Kritischer Fehler
-de.maintenance=Wartungsarbeiten
-de.investigating=Es wird untersucht
-de.identified=Ursache identifiziert
-de.monitoring=Es wird beobachtet.
-de.resolved=Behoben
-de.operational=Betriebsbereit
-de.degraded_performance=Eingeschränkte Leistung
-de.partial_outage=Teilweiser Ausfall
-de.major_outage=Schwerer Ausfall
-de.under_maintenance=Wartungsarbeiten
+none=All systems are operational
+minor=Minor restriction
+major=Major outage
+critical=Critical failure
+maintenance=Maintenance work
+investigating=Will be examined
+identified=Cause identified
+monitoring=It is being observed.
+resolved=Fixed
+operational=Operational
+degraded_performance=Limited performance
+partial_outage=Partial failure
+major_outage=Severe failure
+under_maintenance=Maintenance work
 `;
+
+const ENG_JSON = `{
+  "none": "All systems are operational",
+  "minor": "Minor restriction",
+  "major": "Major outage",
+  "critical": "Critical failure",
+  "maintenance": "Maintenance work",
+  "investigating": "Will be examined",
+  "identified": "Cause identified",
+  "monitoring": "It is being observed.",
+  "resolved": "Fixed",
+  "operational": "Operational",
+  "degraded_performance": "Limited performance",
+  "partial_outage": "Partial failure",
+  "major_outage": "Severe failure",
+  "under_maintenance": "Maintenance work"
+}`;
 
 const CONFIG_EXAMPLE = `# Example config.properties (created by CLI)
 discord.bot.token=
@@ -49,12 +52,57 @@ emoji.partial_outage=🟠
 emoji.major_outage=🔴
 emoji.maintenance=🔵
 check.interval.seconds=300
-translations.file=lang/translate-example.conf
+translations.file=lang/eng.json
 translations.language=en
 `;
 
+async function ensureLangFiles() {
+  const langDir = path.resolve('lang');
+  try { await fs.mkdir(langDir, { recursive: true }); } catch(e){}
+
+  const engJsonPath = path.join(langDir, 'eng.json');
+  try {
+    await fs.access(engJsonPath);
+  } catch {
+    await fs.writeFile(engJsonPath, ENG_JSON, { encoding: 'utf8' });
+    console.log(`Wrote ${engJsonPath}`);
+  }
+
+  const confPath = path.join(langDir, 'translate-example.conf');
+  try { await fs.access(confPath); } catch {
+    await fs.writeFile(confPath, TRANSLATIONS_EXAMPLE, { encoding: 'utf8' });
+    console.log(`Wrote ${confPath}`);
+  }
+}
+
+async function detectLanguages() {
+  const langDir = path.resolve('lang');
+  const list = [];
+  try {
+    const files = await fs.readdir(langDir);
+    for (const f of files) {
+      const ext = path.extname(f).toLowerCase();
+      if (ext === '.json' || ext === '.conf') {
+        let base = path.basename(f, ext);
+        if (base.toLowerCase() === 'eng') base = 'en';
+        list.push({ lang: base.toLowerCase(), file: path.join('lang', f) });
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+  // ensure 'en' present
+  if (!list.find(l => l.lang === 'en')) list.unshift({ lang: 'en', file: 'lang/eng.json' });
+  return list;
+}
+
 async function runCLI() {
   console.log("=== Status Monitor - Setup (JS) ===");
+
+  await ensureLangFiles();
+  const langs = await detectLanguages();
+
+  const languageChoices = langs.map(l => ({ name: `${l.lang} (${l.file})`, value: l }));
 
   const answers = await inquirer.prompt([
     { name: "discord_bot_token", message: "Discord Bot Token:" },
@@ -69,10 +117,11 @@ async function runCLI() {
     { name: "emoji_major_outage", message: "Emoji - major_outage (e.g. 🔴):", default: "🔴" },
     { name: "emoji_maintenance", message: "Emoji - maintenance (e.g. 🔵):", default: "🔵" },
     { name: "check_interval", message: "Check interval seconds (default 300):", default: "300" },
-    { name: "translations_file", message: "Translations file (default lang/translate-example.conf):", default: "lang/translate-example.conf" },
-    { name: "translations_language", message: "Translations language (e.g. en or de) (default en):", default: "en" }
+
+    { type: 'list', name: 'translations_choice', message: 'Select translations language/file:', choices: languageChoices, default: 0 }
   ]);
 
+  const selected = answers.translations_choice;
   const props = [
     `discord.bot.token=${answers.discord_bot_token.trim()}`,
     `statuspage.name=${answers.statuspage_name.trim()}`,
@@ -86,37 +135,12 @@ async function runCLI() {
     `emoji.major_outage=${answers.emoji_major_outage.trim()}`,
     `emoji.maintenance=${answers.emoji_maintenance.trim()}`,
     `check.interval.seconds=${answers.check_interval.trim() || "300"}`,
-    `translations.file=${answers.translations_file.trim() || "lang/translate-example.conf"}`,
-    `translations.language=${answers.translations_language.trim() || "en"}`
+    `translations.file=${selected.file}`,
+    `translations.language=${selected.lang}`
   ].join("\n");
 
   await fs.writeFile(path.resolve("config.properties"), props, { encoding: "utf8" });
   console.log("Wrote config.properties");
-
-  // ensure lang directory exists
-  const trPath = path.resolve(answers.translations_file || "lang/translate-example.conf");
-  const trDir = path.dirname(trPath);
-  try {
-    await fs.mkdir(trDir, { recursive: true });
-  } catch (e) {
-    // ignore
-  }
-
-  try {
-    await fs.access(trPath);
-    console.log(`${trPath} already exists — not overwriting.`);
-  } catch {
-    await fs.writeFile(trPath, TRANSLATIONS_EXAMPLE, { encoding: "utf8" });
-    console.log(`Wrote ${trPath}`);
-  }
-
-  try {
-    await fs.access("config.properties.example");
-    console.log("config.properties.example already exists — not overwriting.");
-  } catch {
-    await fs.writeFile("config.properties.example", CONFIG_EXAMPLE, { encoding: "utf8" });
-    console.log("Wrote config.properties.example");
-  }
 
   console.log("Setup complete. Die Dateien wurden im Projekt-Root abgelegt.");
 }
