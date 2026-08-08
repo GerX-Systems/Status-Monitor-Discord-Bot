@@ -13,5 +13,5 @@ emoji.partial_outage=🟠
 emoji.major_outage=🔴
 emoji.maintenance=🔵
 check.interval.seconds=300
-translations.file=translate-example.conf
+translations.file=lang/translate-example.conf
 translations.language=en

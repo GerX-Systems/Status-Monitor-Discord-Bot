@@ -49,7 +49,7 @@ emoji.partial_outage=🟠
 emoji.major_outage=🔴
 emoji.maintenance=🔵
 check.interval.seconds=300
-translations.file=translate-example.conf
+translations.file=lang/translate-example.conf
 translations.language=en
 `;
 
@@ -69,7 +69,7 @@ async function runCLI(): Promise<void> {
     { name: "emoji_major_outage", message: "Emoji - major_outage (e.g. 🔴):", default: "🔴" },
     { name: "emoji_maintenance", message: "Emoji - maintenance (e.g. 🔵):", default: "🔵" },
     { name: "check_interval", message: "Check interval seconds (default 300):", default: "300" },
-    { name: "translations_file", message: "Translations file (default translate-example.conf):", default: "translate-example.conf" },
+    { name: "translations_file", message: "Translations file (default lang/translate-example.conf):", default: "lang/translate-example.conf" },
     { name: "translations_language", message: "Translations language (e.g. en or de) (default en):", default: "en" }
   ]);
 
@@ -86,14 +86,17 @@ async function runCLI(): Promise<void> {
     `emoji.major_outage=${(answers as any).emoji_major_outage.trim()}`,
     `emoji.maintenance=${(answers as any).emoji_maintenance.trim()}`,
     `check.interval.seconds=${(answers as any).check_interval.trim() || "300"}`,
-    `translations.file=${(answers as any).translations_file.trim() || "translate-example.conf"}`,
+    `translations.file=${(answers as any).translations_file.trim() || "lang/translate-example.conf"}`,
     `translations.language=${(answers as any).translations_language.trim() || "en"}`
   ].join("\n");
 
   await fs.writeFile(path.resolve("config.properties"), props, { encoding: "utf8" });
   console.log("Wrote config.properties (TS)");
 
-  const trPath = path.resolve((answers as any).translations_file || "translate-example.conf");
+  const trPath = path.resolve((answers as any).translations_file || "lang/translate-example.conf");
+  const trDir = path.dirname(trPath);
+  try { await fs.mkdir(trDir, { recursive: true }); } catch {}
+
   try {
     await fs.access(trPath);
     console.log(`${trPath} already exists — not overwriting.`);

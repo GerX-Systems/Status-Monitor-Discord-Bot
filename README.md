@@ -14,7 +14,7 @@ Schnellstart
 
    npm install
 
-2) Interaktives Setup ausführen (erzeugt `config.properties` und `translate-example.conf` im Projekt‑Root):
+2) Interaktives Setup ausführen (erzeugt `config.properties` und `lang/translate-example.conf` im Projekt‑Root):
 
    npm run setup
 
@@ -47,7 +47,7 @@ Schnellstart
 Konfigurationsdateien
 - config.properties — vom CLI erzeugt (oder manuell editierbar)
 - config.properties.example — Beispielkonfiguration
-- translate-example.conf — Beispielübersetzungen im Format `lang.key=value` (z. B. `en.none=All systems...`)
+- lang/translate-example.conf — Beispielübersetzungen im Format `lang.key=value` (z. B. `en.none=All systems...`)
 
 State & Persistenz
 - Laufzeitzustand (bekannte Incidents, Message‑IDs) wird in `status_state.json` im Projekt‑Root gespeichert.
@@ -80,7 +80,7 @@ Quick start
 
    npm install
 
-2. Run the interactive setup to generate `config.properties` and `translate-example.conf` in the repository root:
+2. Run the interactive setup to generate `config.properties` and `lang/translate-example.conf` in the repository root:
 
    npm run setup
 
@@ -110,7 +110,7 @@ Quick start
    - Console logs show connection status and runtime errors.
 
 Notes
-- `translate-example.conf` is provided as an example translations file (format: `lang.key=value`, e.g. `en.none=All systems are operational`).
+- `lang/translate-example.conf` is provided as an example translations file (format: `lang.key=value`, e.g. `en.none=All systems are operational`).
 - Runtime state (known incidents and message IDs) is stored in `status_state.json` in the project root.
 - Ensure the bot token and channel IDs are correct and that the bot has write permissions in the channels configured.
 
