@@ -1,0 +1,40 @@
+{
+  "none": "Alle Systeme Betriebsbereit",
+  "minor": "Leiche Einschränkungen",
+  "major": "Großer Ausfall",
+  "critical": "Kritischer ausfall",
+  "maintenance": "Wartungsarbeiten",
+  "investigating": "Untersuchung",
+  "identified": "Identifiziert",
+  "monitoring": "It is being observed.",
+  "resolved": "Fixed",
+  "operational": "Operational",
+  "degraded_performance": "Limited performance",
+  "partial_outage": "Partial failure",
+  "major_outage": "Severe failure",
+  "under_maintenance": "Maintenance work",
+
+  "system_status_update_title": "System status update",
+  "system_status_update_description": "The overall status for **{page}** has changed.",
+  "new_status": "New status",
+
+  "incident_update_title": "🚨 Incident Update: {name}",
+  "status_label": "Status",
+  "impact_label": "Impact",
+  "last_update_label": "Last update",
+
+  "live_overview_intro": "Here you will find a live overview of our systems.",
+  "past_incidents_label": "Past incidents",
+  "button_status_page": "Status Page",
+  "button_past_incidents": "Past incidents",
+
+  "maintenance_planned_title": "Planned maintenance work",
+  "maintenance_start_label": "Start",
+  "maintenance_end_label": "End",
+  "maintenance_description_label": "Description",
+  "maintenance_affected_systems_label": "Affected systems",
+
+  "overall_status_label": "Overall status:",
+  "no_components_found": "*No components found*",
+  "updated_in_label": "Updated {time}"
+}
