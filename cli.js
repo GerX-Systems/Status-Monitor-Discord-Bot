@@ -96,6 +96,29 @@ async function detectLanguages() {
   return list;
 }
 
+async function loadExistingConfig() {
+  const cfgPath = path.resolve('config.properties');
+  const existing = {};
+  try {
+    await fs.access(cfgPath);
+    const content = await fs.readFile(cfgPath, { encoding: 'utf8' });
+    const lines = content.split(/\r?\n/);
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eq = trimmed.indexOf('=');
+      if (eq === -1) continue;
+      const key = trimmed.substring(0, eq).trim();
+      const val = trimmed.substring(eq + 1).trim();
+      existing[key] = val;
+    }
+    console.log('Loaded existing config.properties (will use values as defaults).');
+  } catch (e) {
+    // file doesn't exist — ignore
+  }
+  return existing;
+}
+
 async function runCLI() {
   console.log("=== Status Monitor - Setup (JS) ===");
 
@@ -104,21 +127,30 @@ async function runCLI() {
 
   const languageChoices = langs.map(l => ({ name: `${l.lang} (${l.file})`, value: l }));
 
-  const answers = await inquirer.prompt([
-    { name: "discord_bot_token", message: "Discord Bot Token:" },
-    { name: "statuspage_name", message: "Statuspage name (the-subdomain before .statuspage.io):" },
-    { name: "banner_live", message: "Live status banner URL (or empty):", default: "" },
-    { name: "banner_history", message: "History banner URL (or empty):", default: "" },
-    { name: "incident_channel", message: "Incident channel ID (numeric Discord channel id):", default: "" },
-    { name: "dashboard_channel", message: "Dashboard channel ID (numeric Discord channel id):", default: "" },
-    { name: "emoji_operational", message: "Emoji - operational (e.g. ✅):", default: "✅" },
-    { name: "emoji_degraded_performance", message: "Emoji - degraded_performance (e.g. ⚠️):", default: "⚠️" },
-    { name: "emoji_partial_outage", message: "Emoji - partial_outage (e.g. 🟠):", default: "🟠" },
-    { name: "emoji_major_outage", message: "Emoji - major_outage (e.g. 🔴):", default: "🔴" },
-    { name: "emoji_maintenance", message: "Emoji - maintenance (e.g. 🔵):", default: "🔵" },
-    { name: "check_interval", message: "Check interval seconds (default 300):", default: "300" },
+  const existing = await loadExistingConfig();
 
-    { type: 'list', name: 'translations_choice', message: 'Select translations language/file:', choices: languageChoices, default: 0 }
+  // find default translation index
+  let defaultTranslationIndex = 0;
+  if (existing['translations.file']) {
+    const idx = languageChoices.findIndex(c => c.value.file === existing['translations.file']);
+    if (idx !== -1) defaultTranslationIndex = idx;
+  }
+
+  const answers = await inquirer.prompt([
+    { name: "discord_bot_token", message: "Discord Bot Token:", default: existing['discord.bot.token'] || '' },
+    { name: "statuspage_name", message: "Statuspage name (the-subdomain before .statuspage.io):", default: existing['statuspage.name'] || '' },
+    { name: "banner_live", message: "Live status banner URL (or empty):", default: existing['banner.live'] || '' },
+    { name: "banner_history", message: "History banner URL (or empty):", default: existing['banner.history'] || '' },
+    { name: "incident_channel", message: "Incident channel ID (numeric Discord channel id):", default: existing['discord.channel.incident'] || '' },
+    { name: "dashboard_channel", message: "Dashboard channel ID (numeric Discord channel id):", default: existing['discord.channel.dashboard'] || '' },
+    { name: "emoji_operational", message: "Emoji - operational (e.g. ✅):", default: existing['emoji.operational'] || '✅' },
+    { name: "emoji_degraded_performance", message: "Emoji - degraded_performance (e.g. ⚠️):", default: existing['emoji.degraded_performance'] || '⚠️' },
+    { name: "emoji_partial_outage", message: "Emoji - partial_outage (e.g. 🟠):", default: existing['emoji.partial_outage'] || '🟠' },
+    { name: "emoji_major_outage", message: "Emoji - major_outage (e.g. 🔴):", default: existing['emoji.major_outage'] || '🔴' },
+    { name: "emoji_maintenance", message: "Emoji - maintenance (e.g. 🔵):", default: existing['emoji.maintenance'] || '🔵' },
+    { name: "check_interval", message: "Check interval seconds (default 300):", default: existing['check.interval.seconds'] || '300' },
+
+    { type: 'list', name: 'translations_choice', message: 'Select translations language/file:', choices: languageChoices, default: defaultTranslationIndex }
   ]);
 
   const selected = answers.translations_choice;
@@ -142,10 +174,10 @@ async function runCLI() {
   await fs.writeFile(path.resolve("config.properties"), props, { encoding: "utf8" });
   console.log("Wrote config.properties");
 
-  console.log("Setup complete. Die Dateien wurden im Projekt-Root abgelegt.");
+  console.log("Setup complete. The files were written to the project root.");
 }
 
 runCLI().catch(err => {
-  console.error("Fehler im Setup:", err);
+  console.error("Error in setup:", err);
   process.exit(1);
 });
